@@ -8,7 +8,7 @@ export default function Form(props) {
       sx={{
         "& .MuiFormControl-root": {
           width: "90%",
-          margin: 2,
+          margin: "8px",
         },
       }}
       noValidate
