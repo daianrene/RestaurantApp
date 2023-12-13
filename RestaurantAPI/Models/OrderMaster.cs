@@ -9,7 +9,7 @@ namespace RestaurantAPI.Models
         [Key]
         public long Id { get; set; }
         [Column(TypeName = "nvarchar(75)")]
-        public string OrderId { get; set; }
+        public string OrderNumberId { get; set; }
         public Customer Customer { get; set; }
         public List<OrderDetail> Details { get; set; } = new List<OrderDetail>();
         [Column(TypeName = "nvarchar(15)")]
