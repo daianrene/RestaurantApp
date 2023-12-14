@@ -1,5 +1,5 @@
 import { Container, Typography } from "@mui/material";
-import Order from "./Order";
+import Order from "./components/Order";
 
 function App() {
   return (

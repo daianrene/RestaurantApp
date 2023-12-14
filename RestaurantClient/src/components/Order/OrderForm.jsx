@@ -5,14 +5,17 @@ import {
   Button as MuiButton,
 } from "@mui/material";
 
-import Form from "../layout/Form";
-import Input from "../controls/Input";
-import Button from "../controls/Button";
-import Select from "../controls/select";
+import Form from "../../layout/Form";
+import Input from "../../controls/Input";
+import Button from "../../controls/Button";
+import Select from "../../controls/select";
 
 import ReplayIcon from "@mui/icons-material/Replay";
 import RestaurantIcon from "@mui/icons-material/Restaurant";
 import ReorderIcon from "@mui/icons-material/Reorder";
+
+import { useEffect, useState } from "react";
+import { createAPIEndpoint } from "../../api";
 
 const payMethods = [
   { id: "none", title: "Select" },
@@ -21,6 +24,21 @@ const payMethods = [
 ];
 
 const OrderForm = ({ values, handleInputChange }) => {
+  const [customers, setCustomers] = useState([{ id: 0, title: "Anonymous" }]);
+
+  useEffect(() => {
+    createAPIEndpoint("Customer")
+      .fetchAll()
+      .then((res) => {
+        let customerList = res.data.map((item) => ({
+          id: item.id,
+          title: item.customerName,
+        }));
+        setCustomers(customerList);
+      })
+      .catch((err) => console.log(err));
+  }, []);
+
   return (
     <Form>
       <Grid container>
@@ -48,11 +66,7 @@ const OrderForm = ({ values, handleInputChange }) => {
             name="customerId"
             value={values.customerId}
             onChange={handleInputChange}
-            options={[
-              { id: 0, title: "Anonymous" },
-              { id: 1, title: "Customer 1" },
-              { id: 2, title: "Customer 2" },
-            ]}
+            options={customers}
           />
         </Grid>
         <Grid item xs={6}>
