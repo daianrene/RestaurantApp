@@ -6,9 +6,8 @@ namespace RestaurantAPI.Models
     public class Customer
     {
         [Key]
-        public int Id { get; set; }
+        public int CustomerId { get; set; }
 
-        [Required]
         [Column(TypeName = "nvarchar(100)")]
         public string CustomerName { get; set; }
     }

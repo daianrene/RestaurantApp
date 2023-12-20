@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using RestaurantAPI.DataAccess;
 using RestaurantAPI.Models;
@@ -12,11 +7,11 @@ namespace RestaurantAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class OrderMastersController : ControllerBase
+    public class OrderController : ControllerBase
     {
         private readonly RestaurantDbContext _context;
 
-        public OrderMastersController(RestaurantDbContext context)
+        public OrderController(RestaurantDbContext context)
         {
             _context = context;
         }
@@ -47,7 +42,7 @@ namespace RestaurantAPI.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutOrderMaster(long id, OrderMaster orderMaster)
         {
-            if (id != orderMaster.Id)
+            if (id != orderMaster.OrderMasterId)
             {
                 return BadRequest();
             }
@@ -81,7 +76,7 @@ namespace RestaurantAPI.Controllers
             _context.OrderMasters.Add(orderMaster);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetOrderMaster", new { id = orderMaster.Id }, orderMaster);
+            return CreatedAtAction("GetOrderMaster", new { id = orderMaster.OrderMasterId }, orderMaster);
         }
 
         // DELETE: api/OrderMasters/5
@@ -102,7 +97,7 @@ namespace RestaurantAPI.Controllers
 
         private bool OrderMasterExists(long id)
         {
-            return _context.OrderMasters.Any(e => e.Id == id);
+            return _context.OrderMasters.Any(e => e.OrderMasterId == id);
         }
     }
 }

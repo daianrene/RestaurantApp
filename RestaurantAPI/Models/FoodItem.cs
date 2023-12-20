@@ -7,11 +7,9 @@ namespace RestaurantAPI.Models
     public class FoodItem
     {
         [Key]
-        public int Id { get; set; }
-        [Required]
+        public int FoodItemId { get; set; }
         [Column(TypeName = "nvarchar(100)")]
         public string FoodItemName { get; set; }
-        [Required]
         [Precision(18, 2)]
         public decimal FoodItemPrice { get; set; } = 0;
     }

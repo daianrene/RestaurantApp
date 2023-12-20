@@ -17,11 +17,11 @@ builder.Services.AddDbContext<RestaurantDbContext>(options =>
 
 builder.Services.AddCors(options =>
 {
-    options.AddDefaultPolicy(
-        policy =>
-        {
-            policy.AllowAnyOrigin();
-        });
+    options.AddPolicy("Restaurant", policy =>
+    {
+        policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
+    });
+
 });
 
 var app = builder.Build();
@@ -35,7 +35,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.UseCors();
+app.UseCors("Restaurant");
 
 app.UseAuthorization();
 
