@@ -17,13 +17,20 @@ import ReorderIcon from "@mui/icons-material/Reorder";
 import { useEffect, useState } from "react";
 import { createAPIEndpoint } from "../../api";
 
-const payMethods = [
+const pMethods = [
   { id: "none", title: "Select" },
   { id: "cash", title: "Cash" },
   { id: "card", title: "Card" },
 ];
 
-const OrderForm = ({ values, handleInputChange }) => {
+const OrderForm = ({
+  values,
+  setValues,
+  errors,
+  setErrors,
+  handleInputChange,
+  resetFormControls,
+}) => {
   const [customers, setCustomers] = useState([{ id: 0, title: "Anonymous" }]);
 
   useEffect(() => {
@@ -31,7 +38,7 @@ const OrderForm = ({ values, handleInputChange }) => {
       .fetchAll()
       .then((res) => {
         let customerList = res.data.map((item) => ({
-          id: item.id,
+          id: item.customerId,
           title: item.customerName,
         }));
         setCustomers(customerList);
@@ -39,15 +46,46 @@ const OrderForm = ({ values, handleInputChange }) => {
       .catch((err) => console.log(err));
   }, []);
 
+  useEffect(() => {
+    let gTotal = values.orderDetails.reduce((acc, item) => {
+      return acc + item.quantity * item.foodItemPrice;
+    }, 0);
+
+    setValues({ ...values, gTotal });
+  }, [JSON.stringify(values.orderDetails)]);
+
+  const validateForm = () => {
+    let temp = {};
+    temp.customerId = values.customerId != 0 ? "" : "This field is required";
+    temp.pMethod = values.pMethod != "none" ? "" : "This field is required";
+    temp.orderDetails =
+      values.orderDetails.length != 0 ? "" : "This field is required";
+    setErrors({ ...temp });
+    return Object.values(temp).every((x) => x === "");
+  };
+
+  const submitOrder = (e) => {
+    e.preventDefault();
+    console.log(values);
+    if (validateForm()) {
+      createAPIEndpoint("Order")
+        .create(values)
+        .then((res) => {
+          resetFormControls();
+        })
+        .catch((err) => console.log(err));
+    }
+  };
+
   return (
-    <Form>
+    <Form onSubmit={submitOrder}>
       <Grid container>
         <Grid item xs={6}>
           <Input
             disabled
             label="Order Number"
             name="orderNumber"
-            value={values.ordenNumber}
+            value={values.orderNumber}
             sx={{
               "& .MuiTypography-root": {
                 color: "#f3b33d",
@@ -67,21 +105,23 @@ const OrderForm = ({ values, handleInputChange }) => {
             value={values.customerId}
             onChange={handleInputChange}
             options={customers}
+            error={errors.customerId}
           />
         </Grid>
         <Grid item xs={6}>
           <Select
             label="Payment Method"
-            name="payMethod"
-            value={values.payMethod}
+            name="pMethod"
+            value={values.pMethod}
             onChange={handleInputChange}
-            options={payMethods}
+            options={pMethods}
+            error={errors.pMethod}
           />
           <Input
             disabled
             label="Total"
             name="gTotal"
-            value={values.gTotal}
+            value={values.gTotal.toFixed(2)}
             sx={{
               "& .MuiTypography-root": {
                 color: "#f3b33d",

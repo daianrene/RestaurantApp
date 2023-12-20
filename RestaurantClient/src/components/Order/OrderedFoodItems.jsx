@@ -32,79 +32,94 @@ const OrderedFoodItems = ({ values, setValues }) => {
 
   return (
     <List>
-      {orderedItems.map((item, idx) => (
-        <Paper
-          key={idx}
-          sx={{
-            margin: "20px 0px",
-            "&:hover": { cursor: "pointer" },
-            "&:hover .MuiListItemSecondaryAction-root": { display: "block" },
-          }}
-        >
-          <ListItem>
-            <ListItemText
-              primary={item.foodItemName}
-              primaryTypographyProps={{
-                component: "h1",
-                style: { fontWeight: "500", fontSize: "1.2em" },
-              }}
-              secondary={
-                <>
-                  <ButtonGroup
-                    size="small"
-                    sx={{
-                      backgroundColor: "#E3E3E3",
-                      borderRadius: 8,
-                      marginY: "10px",
-                      "& .MuiButtonBase-root": {
-                        border: "none",
-                        minWidth: "25px",
-                        padding: "1px",
-                      },
-                      "& button:nth-child(2)": {
+      {orderedItems.length == 0 ? (
+        <ListItem>
+          <ListItemText
+            primary="Please add food"
+            primaryTypographyProps={{
+              style: { textAlign: "center", fontStyle: "italic" },
+            }}
+          />
+        </ListItem>
+      ) : (
+        orderedItems.map((item, idx) => (
+          <Paper
+            key={idx}
+            sx={{
+              margin: "20px 0px",
+              "&:hover": { cursor: "pointer" },
+              "&:hover .MuiListItemSecondaryAction-root": { display: "block" },
+            }}
+          >
+            <ListItem>
+              <ListItemText
+                primary={item.foodItemName}
+                primaryTypographyProps={{
+                  component: "h1",
+                  style: { fontWeight: "500", fontSize: "1.2em" },
+                }}
+                secondary={
+                  <>
+                    <ButtonGroup
+                      size="small"
+                      sx={{
+                        backgroundColor: "#E3E3E3",
+                        borderRadius: 8,
+                        marginY: "10px",
+                        "& .MuiButtonBase-root": {
+                          border: "none",
+                          minWidth: "25px",
+                          padding: "1px",
+                        },
+                        "& button:nth-child(2)": {
+                          fontSize: "1.2em",
+                          color: "#000",
+                        },
+                      }}
+                    >
+                      <Button onClick={(e) => updateQuantity(idx, -1)}>
+                        -
+                      </Button>
+                      <Button disabled>{item.quantity}</Button>
+                      <Button onClick={(e) => updateQuantity(idx, +1)}>
+                        +
+                      </Button>
+                    </ButtonGroup>
+                    <span
+                      style={{
+                        fontWeight: "bolder",
                         fontSize: "1.2em",
-                        color: "#000",
-                      },
-                    }}
-                  >
-                    <Button onClick={(e) => updateQuantity(idx, -1)}>-</Button>
-                    <Button disabled>{item.quantity}</Button>
-                    <Button onClick={(e) => updateQuantity(idx, +1)}>+</Button>
-                  </ButtonGroup>
-                  <span
-                    style={{
-                      fontWeight: "bolder",
-                      fontSize: "1.2em",
-                      margin: "0px 10px",
-                    }}
-                  >
-                    {" $ " + item.quantity * item.foodItemPrice}
-                  </span>
-                </>
-              }
-              secondaryTypographyProps={{
-                component: "div",
-              }}
-            />
+                        margin: "0px 10px",
+                      }}
+                    >
+                      {" $ " + item.quantity * item.foodItemPrice}
+                    </span>
+                  </>
+                }
+                secondaryTypographyProps={{
+                  component: "div",
+                }}
+              />
 
-            <ListItemSecondaryAction
-              sx={{
-                display: "none",
-                "& .MuiButtonBase-root": {
-                  color: "#E81719",
-                },
-              }}
-            >
-              <IconButton
-                disableRipple
-                onClick={(e) => removeFoodItem(idx, item.orderDetailId)}
+              <ListItemSecondaryAction
+                sx={{
+                  display: "none",
+                  "& .MuiButtonBase-root": {
+                    color: "#E81719",
+                  },
+                }}
               >
-                <DeleteIcon />
-              </IconButton>
-            </ListItemSecondaryAction>
-          </ListItem>
-        </Paper>
-      ))}
+                <IconButton
+                  disableRipple
+                  onClick={(e) => removeFoodItem(idx, item.orderDetailId)}
+                >
+                  <DeleteIcon />
+                </IconButton>
+              </ListItemSecondaryAction>
+            </ListItem>
+          </Paper>
+        ))
+      )}
     </List>
   );
 };

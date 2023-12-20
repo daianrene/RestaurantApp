@@ -34,7 +34,7 @@ const SearchFoodItem = ({ values, setValues }) => {
     x = x.filter((item) => {
       return (
         item.foodItemName.toLowerCase().includes(searchKey.toLowerCase()) &&
-        orderedItems.every((y) => item.id != y.foodItemId)
+        orderedItems.every((y) => item.foodItemId != y.foodItemId)
       );
     });
     setSearchList(x);
@@ -44,7 +44,7 @@ const SearchFoodItem = ({ values, setValues }) => {
     let newDetail = {
       orderMasterId: values.orderMasterId,
       orderDetailId: 0,
-      foodItemId: foodItem.id,
+      foodItemId: foodItem.foodItemId,
       quantity: 1,
       foodItemPrice: foodItem.foodItemPrice,
       foodItemName: foodItem.foodItemName,

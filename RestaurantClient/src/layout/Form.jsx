@@ -4,18 +4,17 @@ export default function Form(props) {
   const { children, ...other } = props;
 
   return (
-    <FormControl
-      sx={{
-        "& .MuiFormControl-root": {
-          width: "90%",
-          margin: "8px",
-        },
-      }}
-      noValidate
-      autoComplete="off"
-      {...other}
-    >
-      {children}
-    </FormControl>
+    <form noValidate autoComplete="off" {...other}>
+      <FormControl
+        sx={{
+          "& .MuiFormControl-root": {
+            width: "90%",
+            margin: "8px",
+          },
+        }}
+      >
+        {children}
+      </FormControl>
+    </form>
   );
 }

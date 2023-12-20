@@ -9,9 +9,9 @@ const generateOrderNumber = () =>
 
 const getFreshModelObject = () => ({
   orderMasterId: 0,
-  ordenNumber: generateOrderNumber(),
+  orderNumber: generateOrderNumber(),
   customerId: 0,
-  payMethod: "none",
+  pMethod: "none",
   gTotal: 0,
   deletedOrderIds: "",
   orderDetails: [],
@@ -31,7 +31,14 @@ const Order = () => {
     <>
       <Grid container spacing={2}>
         <Grid item sm={12}>
-          <OrderForm values={values} handleInputChange={handleInputChange} />
+          <OrderForm
+            values={values}
+            setValues={setValues}
+            errors={errors}
+            setErrors={setErrors}
+            handleInputChange={handleInputChange}
+            resetFormControls={resetFormControls}
+          />
         </Grid>
         <Grid item sm={6}>
           <SearchFoodItem values={values} setValues={setValues} />
