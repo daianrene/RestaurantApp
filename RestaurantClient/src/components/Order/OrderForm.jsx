@@ -16,11 +16,13 @@ import ReorderIcon from "@mui/icons-material/Reorder";
 
 import { useEffect, useState } from "react";
 import { createAPIEndpoint } from "../../api";
+import Popup from "../../layout/Popup";
+import OrderList from "./OrderList";
 
 const pMethods = [
   { id: "none", title: "Select" },
-  { id: "cash", title: "Cash" },
-  { id: "card", title: "Card" },
+  { id: "Cash", title: "Cash" },
+  { id: "Card", title: "Card" },
 ];
 
 const OrderForm = ({
@@ -32,6 +34,7 @@ const OrderForm = ({
   resetFormControls,
 }) => {
   const [customers, setCustomers] = useState([{ id: 0, title: "Anonymous" }]);
+  const [orderListVisibility, setOrderListVisibility] = useState(false);
 
   useEffect(() => {
     createAPIEndpoint("Customer")
@@ -41,7 +44,7 @@ const OrderForm = ({
           id: item.customerId,
           title: item.customerName,
         }));
-        setCustomers(customerList);
+        setCustomers([{ id: 0, title: "Select" }].concat(customerList));
       })
       .catch((err) => console.log(err));
   }, []);
@@ -78,84 +81,105 @@ const OrderForm = ({
   };
 
   return (
-    <Form onSubmit={submitOrder}>
-      <Grid container>
-        <Grid item xs={6}>
-          <Input
-            disabled
-            label="Order Number"
-            name="orderNumber"
-            value={values.orderNumber}
-            sx={{
-              "& .MuiTypography-root": {
-                color: "#f3b33d",
-                fontWeight: "bolder",
-                fontSize: "1.5em",
-              },
-            }}
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">#</InputAdornment>
-              ),
-            }}
-          />
-          <Select
-            label="Customer"
-            name="customerId"
-            value={values.customerId}
-            onChange={handleInputChange}
-            options={customers}
-            error={errors.customerId}
-          />
+    <>
+      <Form onSubmit={submitOrder}>
+        <Grid container>
+          <Grid item xs={6}>
+            <Input
+              disabled
+              label="Order Number"
+              name="orderNumber"
+              value={values.orderNumber}
+              sx={{
+                "& .MuiTypography-root": {
+                  color: "#f3b33d",
+                  fontWeight: "bolder",
+                  fontSize: "1.5em",
+                },
+              }}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">#</InputAdornment>
+                ),
+              }}
+            />
+            <Select
+              label="Customer"
+              name="customerId"
+              value={values.customerId}
+              onChange={handleInputChange}
+              options={customers}
+              error={errors.customerId}
+            />
+          </Grid>
+          <Grid item xs={6}>
+            <Select
+              label="Payment Method"
+              name="pMethod"
+              value={values.pMethod}
+              onChange={handleInputChange}
+              options={pMethods}
+              error={errors.pMethod}
+            />
+            <Input
+              disabled
+              label="Total"
+              name="gTotal"
+              value={values.gTotal.toFixed(2)}
+              sx={{
+                "& .MuiTypography-root": {
+                  color: "#f3b33d",
+                  fontWeight: "bolder",
+                  fontSize: "1.5em",
+                },
+              }}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">$</InputAdornment>
+                ),
+              }}
+            />
+            <ButtonGroup
+              sx={{
+                backgroundColor: "#f3b33d",
+                ".MuiButtonGroup-grouped": {
+                  borderColor: "#000",
+                  color: "#000",
+                },
+                margin: "8px",
+              }}
+            >
+              <MuiButton
+                size="large"
+                type="submit"
+                endIcon={<RestaurantIcon />}
+              >
+                Submit
+              </MuiButton>
+              <MuiButton
+                size="small"
+                startIcon={<ReplayIcon />}
+                onClick={(e) => resetFormControls()}
+              ></MuiButton>
+            </ButtonGroup>
+            <Button
+              size="large"
+              startIcon={<ReorderIcon />}
+              onClick={(e) => setOrderListVisibility(true)}
+            >
+              Orders
+            </Button>
+          </Grid>
         </Grid>
-        <Grid item xs={6}>
-          <Select
-            label="Payment Method"
-            name="pMethod"
-            value={values.pMethod}
-            onChange={handleInputChange}
-            options={pMethods}
-            error={errors.pMethod}
-          />
-          <Input
-            disabled
-            label="Total"
-            name="gTotal"
-            value={values.gTotal.toFixed(2)}
-            sx={{
-              "& .MuiTypography-root": {
-                color: "#f3b33d",
-                fontWeight: "bolder",
-                fontSize: "1.5em",
-              },
-            }}
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">$</InputAdornment>
-              ),
-            }}
-          />
-          <ButtonGroup
-            sx={{
-              backgroundColor: "#f3b33d",
-              ".MuiButtonGroup-grouped": {
-                borderColor: "#000",
-                color: "#000",
-              },
-              margin: "8px",
-            }}
-          >
-            <MuiButton size="large" type="submit" endIcon={<RestaurantIcon />}>
-              Submit
-            </MuiButton>
-            <MuiButton size="small" startIcon={<ReplayIcon />}></MuiButton>
-          </ButtonGroup>
-          <Button size="large" startIcon={<ReorderIcon />}>
-            Orders
-          </Button>
-        </Grid>
-      </Grid>
-    </Form>
+      </Form>
+      <Popup
+        title="List of Orders"
+        openPopup={orderListVisibility}
+        setOpenPopup={setOrderListVisibility}
+      >
+        <OrderList />
+      </Popup>
+    </>
   );
 };
 
