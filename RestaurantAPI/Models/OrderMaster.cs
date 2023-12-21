@@ -17,5 +17,7 @@ namespace RestaurantAPI.Models
         public string PMethod { get; set; }
         [Precision(18, 2)]
         public decimal GTotal { get; set; }
+        [NotMapped]
+        public string? deletedOrderItemsIds { get; set; }
     }
 }

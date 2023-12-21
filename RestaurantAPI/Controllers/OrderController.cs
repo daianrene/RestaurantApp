@@ -20,21 +20,50 @@ namespace RestaurantAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<OrderMaster>>> GetOrderMasters()
         {
-            return await _context.OrderMasters.ToListAsync();
+            return await _context.OrderMasters.Include(x => x.Customer).ToListAsync();
         }
 
         // GET: api/OrderMasters/5
         [HttpGet("{id}")]
         public async Task<ActionResult<OrderMaster>> GetOrderMaster(long id)
         {
-            var orderMaster = await _context.OrderMasters.FindAsync(id);
+            var orderDetails = await (from master in _context.Set<OrderMaster>()
+                                      join detail in _context.Set<OrderDetail>()
+                                      on master.OrderMasterId equals detail.OrderMasterId
+                                      join foodItem in _context.Set<FoodItem>()
+                                      on detail.FoodItemId equals foodItem.FoodItemId
+                                      where master.OrderMasterId == id
+                                      select new
+                                      {
+                                          master.OrderMasterId,
+                                          detail.OrderDetailId,
+                                          detail.FoodItemId,
+                                          detail.Quantity,
+                                          detail.FoodItemPrice,
+                                          foodItem.FoodItemName
+                                      }
+                                      ).ToListAsync();
+
+            var orderMaster = await (from a in _context.Set<OrderMaster>()
+                                     where a.OrderMasterId == id
+                                     select new
+                                     {
+                                         a.OrderMasterId,
+                                         a.OrderNumber,
+                                         a.CustomerId,
+                                         a.PMethod,
+                                         a.GTotal,
+                                         deletedOrderItemsIds = "",
+                                         orderDetails = orderDetails
+                                     }
+                                     ).FirstOrDefaultAsync();
 
             if (orderMaster == null)
             {
                 return NotFound();
             }
 
-            return orderMaster;
+            return Ok(orderMaster);
         }
 
         // PUT: api/OrderMasters/5
@@ -48,6 +77,20 @@ namespace RestaurantAPI.Controllers
             }
 
             _context.Entry(orderMaster).State = EntityState.Modified;
+
+            foreach (OrderDetail item in orderMaster.OrderDetails)
+            {
+                if (item.OrderDetailId == 0)
+                    _context.OrderDetails.Add(item);
+                else
+                    _context.Entry(item).State = EntityState.Modified;
+            }
+
+            foreach (var i in orderMaster.deletedOrderItemsIds.Split(",").Where(x => x != ""))
+            {
+                OrderDetail y = _context.OrderDetails.Find(Convert.ToInt64(i));
+                if (y is not null) _context.OrderDetails.Remove(y);
+            }
 
             try
             {

@@ -27,6 +27,7 @@ const OrderedFoodItems = ({ values, setValues }) => {
     newList.orderDetails = newList.orderDetails.filter(
       (_, idx) => idx != index
     );
+    if (id != 0) newList.deletedOrderItemsIds += id + ",";
     setValues({ ...newList });
   };
 

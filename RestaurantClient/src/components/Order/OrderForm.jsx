@@ -35,6 +35,7 @@ const OrderForm = ({
 }) => {
   const [customers, setCustomers] = useState([{ id: 0, title: "Anonymous" }]);
   const [orderListVisibility, setOrderListVisibility] = useState(false);
+  const [orderId, setOrderId] = useState(0);
 
   useEffect(() => {
     createAPIEndpoint("Customer")
@@ -57,6 +58,19 @@ const OrderForm = ({
     setValues({ ...values, gTotal });
   }, [JSON.stringify(values.orderDetails)]);
 
+  useEffect(() => {
+    if (orderId == 0) resetFormControls();
+    else {
+      createAPIEndpoint("Order")
+        .fetchById(orderId)
+        .then((res) => {
+          setValues(res.data);
+          setErrors({});
+        })
+        .catch((err) => console.log(err));
+    }
+  }, [orderId]);
+
   const validateForm = () => {
     let temp = {};
     temp.customerId = values.customerId != 0 ? "" : "This field is required";
@@ -69,14 +83,20 @@ const OrderForm = ({
 
   const submitOrder = (e) => {
     e.preventDefault();
-    console.log(values);
     if (validateForm()) {
-      createAPIEndpoint("Order")
-        .create(values)
-        .then((res) => {
-          resetFormControls();
-        })
-        .catch((err) => console.log(err));
+      if (values.orderMasterId == 0) {
+        createAPIEndpoint("Order")
+          .create(values)
+          .then((res) => {
+            resetFormControls();
+          })
+          .catch((err) => console.log(err));
+      } else {
+        createAPIEndpoint("Order")
+          .update(values.orderMasterId, values)
+          .then((res) => setOrderId(0))
+          .catch((err) => console.log(err));
+      }
     }
   };
 
@@ -177,7 +197,10 @@ const OrderForm = ({
         openPopup={orderListVisibility}
         setOpenPopup={setOrderListVisibility}
       >
-        <OrderList />
+        <OrderList
+          setOrderId={setOrderId}
+          setOpenPopup={setOrderListVisibility}
+        />
       </Popup>
     </>
   );

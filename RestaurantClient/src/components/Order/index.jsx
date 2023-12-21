@@ -13,7 +13,7 @@ const getFreshModelObject = () => ({
   customerId: 0,
   pMethod: "none",
   gTotal: 0,
-  deletedOrderIds: "",
+  deletedOrderItemsIds: "",
   orderDetails: [],
 });
 

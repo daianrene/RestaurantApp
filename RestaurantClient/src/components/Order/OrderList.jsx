@@ -3,8 +3,9 @@ import { createAPIEndpoint } from "../../api";
 import Table from "../../layout/Table";
 import { TableBody, TableCell, TableHead, TableRow } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
+import EditIcon from "@mui/icons-material/Edit";
 
-const OrderList = () => {
+const OrderList = ({ setOrderId, setOpenPopup }) => {
   const [orderList, setOrderList] = useState([]);
 
   useEffect(() => {
@@ -16,6 +17,11 @@ const OrderList = () => {
       .catch((err) => console.log(err));
   }, []);
 
+  const showForUpdate = (id) => {
+    setOrderId(id);
+    setOpenPopup(false);
+  };
+
   return (
     <Table>
       <TableHead>
@@ -24,7 +30,6 @@ const OrderList = () => {
           <TableCell>Customer</TableCell>
           <TableCell>Payed With</TableCell>
           <TableCell>Grand Total</TableCell>
-          <TableCell></TableCell>
         </TableRow>
       </TableHead>
       <TableBody>
@@ -34,6 +39,12 @@ const OrderList = () => {
             <TableCell>{item.customer.customerName}</TableCell>
             <TableCell>{item.pMethod}</TableCell>
             <TableCell>{item.gTotal}</TableCell>
+            <TableCell>
+              <EditIcon
+                color="primary"
+                onClick={(e) => showForUpdate(item.orderMasterId)}
+              />
+            </TableCell>
             <TableCell>
               <DeleteIcon color="error" />
             </TableCell>
