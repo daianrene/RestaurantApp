@@ -1,5 +1,5 @@
 import { Container, Typography } from "@mui/material";
-import Order from "./components/Order";
+import OrderIndex from "./components/Order/OrderIndex";
 
 function App() {
   return (
@@ -7,7 +7,7 @@ function App() {
       <Typography variant="h2" align="center">
         Restaurant App
       </Typography>
-      <Order />
+      <OrderIndex />
     </Container>
   );
 }

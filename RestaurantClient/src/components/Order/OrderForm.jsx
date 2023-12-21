@@ -18,6 +18,7 @@ import { useEffect, useState } from "react";
 import { createAPIEndpoint } from "../../api";
 import Popup from "../../layout/Popup";
 import OrderList from "./OrderList";
+import Notification from "../../layout/Notification";
 
 const pMethods = [
   { id: "none", title: "Select" },
@@ -36,6 +37,7 @@ const OrderForm = ({
   const [customers, setCustomers] = useState([{ id: 0, title: "Anonymous" }]);
   const [orderListVisibility, setOrderListVisibility] = useState(false);
   const [orderId, setOrderId] = useState(0);
+  const [notify, setNotify] = useState({ isOpen: false });
 
   useEffect(() => {
     createAPIEndpoint("Customer")
@@ -89,12 +91,16 @@ const OrderForm = ({
           .create(values)
           .then((res) => {
             resetFormControls();
+            setNotify({ isOpen: true, message: "New order was created." });
           })
           .catch((err) => console.log(err));
       } else {
         createAPIEndpoint("Order")
           .update(values.orderMasterId, values)
-          .then((res) => setOrderId(0))
+          .then((res) => {
+            setOrderId(0);
+            setNotify({ isOpen: true, message: "The order was updated." });
+          })
           .catch((err) => console.log(err));
       }
     }
@@ -179,7 +185,10 @@ const OrderForm = ({
               <MuiButton
                 size="small"
                 startIcon={<ReplayIcon />}
-                onClick={(e) => resetFormControls()}
+                onClick={(e) => {
+                  setOrderId(0);
+                  resetFormControls();
+                }}
               ></MuiButton>
             </ButtonGroup>
             <Button
@@ -200,8 +209,10 @@ const OrderForm = ({
         <OrderList
           setOrderId={setOrderId}
           setOpenPopup={setOrderListVisibility}
+          setNotify={setNotify}
         />
       </Popup>
+      <Notification notify={notify} setNotify={setNotify} />
     </>
   );
 };

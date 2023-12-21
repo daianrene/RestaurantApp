@@ -5,7 +5,7 @@ import { TableBody, TableCell, TableHead, TableRow } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 
-const OrderList = ({ setOrderId, setOpenPopup }) => {
+const OrderList = ({ setOrderId, setOpenPopup, setNotify }) => {
   const [orderList, setOrderList] = useState([]);
 
   useEffect(() => {
@@ -20,6 +20,22 @@ const OrderList = ({ setOrderId, setOpenPopup }) => {
   const showForUpdate = (id) => {
     setOrderId(id);
     setOpenPopup(false);
+  };
+
+  const deleteOrder = (id) => {
+    if (window.confirm("Are you sure to delete this order?")) {
+      createAPIEndpoint("Order")
+        .delete(id)
+        .then((res) => {
+          setOpenPopup(false);
+          setOrderId(0);
+          setNotify({
+            isOpen: true,
+            message: "The order was successfully deleted.",
+          });
+        })
+        .catch((error) => console.error(error));
+    }
   };
 
   return (
@@ -46,7 +62,10 @@ const OrderList = ({ setOrderId, setOpenPopup }) => {
               />
             </TableCell>
             <TableCell>
-              <DeleteIcon color="error" />
+              <DeleteIcon
+                color="error"
+                onClick={(e) => deleteOrder(item.orderMasterId)}
+              />
             </TableCell>
           </TableRow>
         ))}

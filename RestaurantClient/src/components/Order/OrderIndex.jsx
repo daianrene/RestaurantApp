@@ -17,7 +17,7 @@ const getFreshModelObject = () => ({
   orderDetails: [],
 });
 
-const Order = () => {
+const OrderIndex = () => {
   const {
     values,
     setValues,
@@ -51,4 +51,4 @@ const Order = () => {
   );
 };
 
-export default Order;
+export default OrderIndex;
